@@ -154,3 +154,20 @@ Session 3 启动指令：
 2. 创建三个工作分支。
 3. 下发 Session 2/3 启动指令。
 4. 设置首次集成时间点并锁定验收模板。
+
+## 11. 当前集成状态（2026-02-20）
+已完成：
+1. Session 2：`src/ui/panel.ts`、`src/main.ts`、`src/style.css` 的交互重构已落地（输入管理、快照、A/B、rollback、debug 快捷入口）。
+2. Session 3：`preprocess/**` 与 `scripts/preprocess_*.mjs` 已落地，支持 `manifest.json` 标准包输出、远程模型可选与 deterministic fallback、SVG optional。
+3. Session 1：引擎已接入 `mask_pack` 契约解析（新旧字段兼容），并修复 flow hint magnitude 贴图来源。
+4. 集成兼容修复：前端 manifest/mask 解析已切换到统一契约解析模块，避免新字段被降级为空包。
+
+已验证：
+1. `npm run build` 通过。
+2. `npm run preprocess:run -- --input ref/pics/sample_input_a.jpeg --use-remote-models false --enable-svg true --job-id session1_integration_a` 通过。
+3. `npm run preprocess:validate -- --manifest outputs/session1_integration_a/manifest.json` 通过。
+4. `npm run preprocess:run -- --input ref/pics/sample_input_b.jpeg --enable-svg true --job-id session1_integration_b` 通过（无 key 场景自动 fallback）。
+5. `npm run preprocess:validate -- --manifest outputs/session1_integration_b/manifest.json` 通过。
+
+说明：
+1. `validate:fps` 与 `validate:leakage` 当前脚本对“参考视频素材”做统计，不代表引擎实时渲染指标，且默认参考素材分别为 24fps 与高泄漏比，不宜作为集成阻断项。

@@ -46,6 +46,28 @@ if (!canvasRoot || !guiRoot || !statsBar) {
 let renderer: Renderer | null = null;
 let panelHandle: ReturnType<typeof createControlPanel> | null = null;
 
+function replaceInputPackage(nextInput: ArtInputPackage): void {
+  inputPackage.baseImageUrl = nextInput.baseImageUrl;
+
+  if (nextInput.maskPackUrl) {
+    inputPackage.maskPackUrl = nextInput.maskPackUrl;
+  } else {
+    delete inputPackage.maskPackUrl;
+  }
+
+  if (nextInput.flowHintUrl) {
+    inputPackage.flowHintUrl = nextInput.flowHintUrl;
+  } else {
+    delete inputPackage.flowHintUrl;
+  }
+
+  if (nextInput.meta) {
+    inputPackage.meta = { ...nextInput.meta };
+  } else {
+    delete inputPackage.meta;
+  }
+}
+
 new p5((p) => {
   p.setup = () => {
     renderer = new Renderer(p, {
@@ -70,8 +92,9 @@ new p5((p) => {
           segmentation,
           debug,
           sampleInputs,
-          onReloadInput: async (url) => {
-            inputPackage.baseImageUrl = url;
+          initialInput: inputPackage,
+          onApplyInputPackage: async (nextInput) => {
+            replaceInputPackage(nextInput);
             await renderer?.reloadInput(inputPackage);
             panelHandle?.refreshRegionRange();
           },
@@ -90,6 +113,7 @@ new p5((p) => {
       .catch((error: unknown) => {
         console.error(error);
         statsBar.textContent = 'Initialization failed. See console for details.';
+        panelHandle?.setStatus('error', 'Renderer initialization failed.');
       });
   };
 

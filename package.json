@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
+    "preprocess:run": "node scripts/preprocess_run.mjs",
+    "preprocess:validate": "node scripts/preprocess_validate_manifest.mjs",
     "validate:leakage": "node scripts/validate_leakage.mjs",
     "validate:fps": "node scripts/validate_fps.mjs"
   },
@@ -21,7 +23,8 @@
   "type": "module",
   "dependencies": {
     "lil-gui": "^0.21.0",
-    "p5": "^2.2.1"
+    "p5": "^2.2.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@types/node": "^25.3.0",

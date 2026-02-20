@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://art-code.local/contracts/preprocess_manifest.schema.json",
+  "title": "Preprocess Manifest",
+  "type": "object",
+  "required": [
+    "version",
+    "source",
+    "createdAt",
+    "baseImageUrl",
+    "maskPackUrl",
+    "flowHintUrl"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1
+    },
+    "createdAt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseImageUrl": {
+      "type": "string",
+      "minLength": 1
+    },
+    "maskPackUrl": {
+      "type": "string",
+      "minLength": 1
+    },
+    "flowHintUrl": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

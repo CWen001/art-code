@@ -10,6 +10,7 @@ import {
   SegmentationConfig,
   VisionArtifacts,
 } from '../types';
+import { parseMaskPackManifest, type ResolvedMaskPackManifest } from '../contracts/artInputManifest';
 import { buildFlowHint } from '../vision/flowHint';
 import { extractEdges } from '../vision/edgeExtractor';
 import { extractRegionMasks } from '../vision/maskExtractor';
@@ -50,12 +51,6 @@ type RendererOptions = {
 type RuntimeMetrics = {
   fps: number;
   leakageRatio: number;
-};
-
-type OptionalMaskPack = {
-  regionMask?: string;
-  edgeMask?: string;
-  confidenceMask?: string;
 };
 
 export class Renderer {
@@ -280,10 +275,12 @@ export class Renderer {
 
     if (this.inputPackage.maskPackUrl) {
       try {
-        const response = await fetch(this.inputPackage.maskPackUrl);
+        const maskPackUrl = this.inputPackage.maskPackUrl;
+        const response = await fetch(maskPackUrl);
         if (response.ok) {
-          const pack = (await response.json()) as OptionalMaskPack;
-          await this.applyMaskPack(pack);
+          const payload = (await response.json()) as unknown;
+          const resolvedPack = parseMaskPackManifest(payload, maskPackUrl);
+          await this.applyMaskPack(resolvedPack);
         }
       } catch {
         // Keep auto-extracted masks if optional pack is invalid.
@@ -299,15 +296,14 @@ export class Renderer {
             () => reject(new Error('Cannot load flow hint image')),
           );
         });
-        externalFlow.resize(this.renderWidth, this.renderHeight);
-        this.flowImage = externalFlow;
+        this.applyFlowHintOverride(externalFlow);
       } catch {
         // Ignore malformed flow hint overrides.
       }
     }
   }
 
-  private async applyMaskPack(pack: OptionalMaskPack): Promise<void> {
+  private async applyMaskPack(pack: ResolvedMaskPackManifest): Promise<void> {
     const p = this.p;
     const loadMaybe = async (url?: string): Promise<p5.Image | null> => {
       if (!url) {
@@ -327,25 +323,34 @@ export class Renderer {
     };
 
     const [regionMask, edgeMask, confidenceMask] = await Promise.all([
-      loadMaybe(pack.regionMask),
-      loadMaybe(pack.edgeMask),
-      loadMaybe(pack.confidenceMask),
+      loadMaybe(pack.regionMaskUrl),
+      loadMaybe(pack.edgeMaskUrl),
+      loadMaybe(pack.confidenceUrl),
     ]);
 
-    if (regionMask && this.confidenceImage) {
+    if (regionMask) {
       regionMask.resize(this.renderWidth, this.renderHeight);
-      this.confidenceImage = this.multiplyGrayImages(this.confidenceImage, regionMask);
+      this.regionImage = regionMask;
+      if (typeof pack.regionCount === 'number' && Number.isFinite(pack.regionCount)) {
+        this.regionCount = Math.max(1, Math.min(255, Math.round(pack.regionCount)));
+      }
     }
 
-    if (edgeMask && this.edgeImage) {
+    if (edgeMask) {
       edgeMask.resize(this.renderWidth, this.renderHeight);
-      this.edgeImage = this.maxGrayImages(this.edgeImage, edgeMask);
+      this.edgeImage = edgeMask;
     }
 
-    if (confidenceMask && this.confidenceImage) {
+    if (confidenceMask) {
       confidenceMask.resize(this.renderWidth, this.renderHeight);
-      this.confidenceImage = this.multiplyGrayImages(this.confidenceImage, confidenceMask);
+      this.confidenceImage = confidenceMask;
     }
+  }
+
+  private applyFlowHintOverride(flowHintImage: p5.Image): void {
+    flowHintImage.resize(this.renderWidth, this.renderHeight);
+    this.flowImage = flowHintImage;
+    this.flowMagnitudeImage = this.createMagnitudeTextureFromFlowHint(flowHintImage);
   }
 
   private runFlowPass(dt: number): void {
@@ -620,39 +625,17 @@ export class Renderer {
     return img;
   }
 
-  private multiplyGrayImages(a: p5.Image, b: p5.Image): p5.Image {
-    const out = this.p.createImage(a.width, a.height);
-    a.loadPixels();
-    b.loadPixels();
+  private createMagnitudeTextureFromFlowHint(flowHint: p5.Image): p5.Image {
+    const out = this.p.createImage(flowHint.width, flowHint.height);
+    flowHint.loadPixels();
     out.loadPixels();
 
-    for (let i = 0; i < a.width * a.height; i += 1) {
+    for (let i = 0; i < flowHint.width * flowHint.height; i += 1) {
       const idx = i * 4;
-      const va = a.pixels[idx] / 255;
-      const vb = b.pixels[idx] / 255;
-      const v = Math.floor(va * vb * 255);
-      out.pixels[idx] = v;
-      out.pixels[idx + 1] = v;
-      out.pixels[idx + 2] = v;
-      out.pixels[idx + 3] = 255;
-    }
-
-    out.updatePixels();
-    return out;
-  }
-
-  private maxGrayImages(a: p5.Image, b: p5.Image): p5.Image {
-    const out = this.p.createImage(a.width, a.height);
-    a.loadPixels();
-    b.loadPixels();
-    out.loadPixels();
-
-    for (let i = 0; i < a.width * a.height; i += 1) {
-      const idx = i * 4;
-      const v = Math.max(a.pixels[idx], b.pixels[idx]);
-      out.pixels[idx] = v;
-      out.pixels[idx + 1] = v;
-      out.pixels[idx + 2] = v;
+      const mag = flowHint.pixels[idx + 2];
+      out.pixels[idx] = mag;
+      out.pixels[idx + 1] = mag;
+      out.pixels[idx + 2] = mag;
       out.pixels[idx + 3] = 255;
     }
 
