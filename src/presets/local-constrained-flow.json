@@ -1,0 +1,14 @@
+{
+  "name": "local-constrained-flow",
+  "params": {
+    "seed": 42,
+    "motionSpeed": 1.1,
+    "turbulence": 0.22,
+    "edgeLock": 0.9,
+    "maskFeather": 0.25,
+    "textureScale": 0.65,
+    "grainAmount": 0.2,
+    "chromaAberration": 0.3,
+    "activeRegionId": -1
+  }
+}

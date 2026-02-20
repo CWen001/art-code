@@ -1,0 +1,142 @@
+:root {
+  --bg: #141116;
+  --panel: #1f1a22;
+  --panel-2: #29222d;
+  --ink: #f4e9d8;
+  --muted: #c3b8a8;
+  --accent: #e85c3a;
+  --accent-soft: #e85c3a33;
+  --line: #3e3342;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', Helvetica, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 10%, #2b2430 0%, #141116 50%),
+    linear-gradient(135deg, #141116 0%, #1a141d 100%);
+}
+
+#app {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.app-header {
+  border: 1px solid var(--line);
+  background: linear-gradient(150deg, #211b25 0%, #17131a 100%);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 8px,
+    #ffffff06 8px,
+    #ffffff06 9px
+  );
+  pointer-events: none;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Lexend Mega', sans-serif;
+  font-size: clamp(14px, 2.1vw, 22px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-header p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.app-main {
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 340px);
+  gap: 14px;
+}
+
+.canvas-panel {
+  border: 1px solid var(--line);
+  background: #100d13;
+  padding: 10px;
+  position: relative;
+}
+
+#canvas-root {
+  aspect-ratio: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border: 1px solid #3f3741;
+  background: #0b0a0d;
+}
+
+#canvas-root canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+#stats-bar {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.control-panel {
+  border: 1px solid var(--line);
+  background: linear-gradient(160deg, var(--panel) 0%, #151018 100%);
+  padding: 10px;
+  min-height: 720px;
+}
+
+#gui-root .lil-gui {
+  --background-color: transparent;
+  --widget-color: var(--panel-2);
+  --focus-color: var(--accent-soft);
+  --hover-color: #ffffff11;
+  --text-color: var(--ink);
+  --title-background-color: #19151b;
+  --number-color: #ffd8a4;
+  --string-color: #ffc6b8;
+  --font-family: 'IBM Plex Sans', sans-serif;
+  --font-size: 12px;
+  border: none;
+  width: 100%;
+}
+
+#gui-root .lil-gui .controller.boolean .widget {
+  border: 1px solid #000;
+}
+
+@media (max-width: 980px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+
+  .control-panel {
+    min-height: 0;
+  }
+}
