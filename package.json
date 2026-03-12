@@ -19,7 +19,7 @@
     "machine-vision"
   ],
   "author": "Codex + user",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "dependencies": {
     "lil-gui": "^0.21.0",
