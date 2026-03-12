@@ -5,17 +5,32 @@ import { Renderer } from './engine/renderer';
 import { createControlPanel } from './ui/panel';
 import { ArtInputPackage, DebugConfig, EngineParams, Preset, SegmentationConfig } from './types';
 
+function createPlaceholderArtDataUrl(label: string, colors: [string, string, string, string]): string {
+  const [bg, primary, secondary, accent] = colors;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720">
+      <rect width="720" height="720" fill="${bg}" />
+      <circle cx="220" cy="250" r="170" fill="${primary}" opacity="0.95" />
+      <rect x="340" y="120" width="220" height="300" rx="36" fill="${secondary}" opacity="0.88" transform="rotate(14 450 270)" />
+      <path d="M120 520 C240 430, 360 620, 560 500" fill="none" stroke="${accent}" stroke-width="34" stroke-linecap="round" />
+      <path d="M140 160 L300 140 L280 320 Z" fill="${accent}" opacity="0.22" />
+      <text x="48" y="676" fill="rgba(255,255,255,0.72)" font-size="28" font-family="IBM Plex Sans, Arial, sans-serif">${label}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
 const sampleInputs: Record<string, string> = {
-  'sample_input_a (default)': new URL('../ref/pics/sample_input_a.jpeg', import.meta.url).href,
-  'sample_input_b': new URL('../ref/pics/sample_input_b.jpeg', import.meta.url).href,
-  sample_input_c: new URL('../ref/pics/sample_input_c.jpeg', import.meta.url).href,
+  'Built-in Sample A': createPlaceholderArtDataUrl('Sample A', ['#12151c', '#d66c4a', '#e5d2b8', '#f4f0e8']),
+  'Built-in Sample B': createPlaceholderArtDataUrl('Sample B', ['#10181f', '#3d7f8c', '#e9b44c', '#f5f2eb']),
+  'Built-in Sample C': createPlaceholderArtDataUrl('Sample C', ['#181118', '#9b4d96', '#6fc3b2', '#f0ebe3']),
 };
 
 const inputPackage: ArtInputPackage = {
-  baseImageUrl: sampleInputs['sample_input_a (default)'],
+  baseImageUrl: sampleInputs['Built-in Sample A'],
   meta: {
-    title: 'external artist Local Flow - Phase 2.5+3',
-    source: 'ref/pics/sample_input_a.jpeg',
+    title: 'Local Constrained Flow',
+    source: 'built-in placeholder artwork',
   },
 };
 

@@ -164,9 +164,9 @@ Session 3 启动指令：
 
 已验证：
 1. `npm run build` 通过。
-2. `npm run preprocess:run -- --input ref/pics/sample_input_a.jpeg --use-remote-models false --enable-svg true --job-id session1_integration_a` 通过。
+2. `npm run preprocess:run -- --input <image-a> --use-remote-models false --enable-svg true --job-id session1_integration_a` 通过。
 3. `npm run preprocess:validate -- --manifest outputs/session1_integration_a/manifest.json` 通过。
-4. `npm run preprocess:run -- --input ref/pics/sample_input_b.jpeg --enable-svg true --job-id session1_integration_b` 通过（无 key 场景自动 fallback）。
+4. `npm run preprocess:run -- --input <image-b> --enable-svg true --job-id session1_integration_b` 通过（无 key 场景自动 fallback）。
 5. `npm run preprocess:validate -- --manifest outputs/session1_integration_b/manifest.json` 通过。
 
 说明：

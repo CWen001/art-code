@@ -21,7 +21,7 @@
 ## 2. 执行入口
 
 ```bash
-npm run preprocess:run -- --input ref/pics/sample_input_a.jpeg
+npm run preprocess:run -- --input <your-image-file>
 ```
 
 常用参数：

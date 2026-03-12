@@ -135,14 +135,14 @@ function rawFrameFromImage(imagePath, width, height) {
 }
 
 const args = parseArgs(process.argv);
-const video = args.get('video') ?? 'ref/videos/sample_motion_b.mp4';
-const base = args.get('base') ?? 'ref/pics/sample_input_a.jpeg';
+const video = args.get('video');
+const base = args.get('base');
 const threshold = Number(args.get('threshold') ?? 0.03);
 const maxFrames = Number(args.get('max-frames') ?? 240);
 const k = Math.max(2, Math.min(16, Number(args.get('k') ?? 10)));
 let regionId = Number(args.get('region-id') ?? -1);
 
-if (!existsSync(video) || !existsSync(base)) {
+if (!video || !base || !existsSync(video) || !existsSync(base)) {
   console.error('Input not found.');
   usage();
   process.exit(2);

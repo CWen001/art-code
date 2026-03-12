@@ -17,10 +17,10 @@ For stable constrained motion, the base image should satisfy:
 3. Texture grain diversity: both smooth and high-frequency regions help visual rhythm.
 4. Resolution: source can be high-res, runtime uses 720x720 working buffer.
 
-Recommended sample order:
-1. `ref/pics/sample_input_a.jpeg` (default)
-2. `ref/pics/sample_input_b.jpeg`
-3. `ref/pics/sample_input_c.jpeg`
+Recommended input order:
+1. a high-contrast abstract image with clear region boundaries
+2. an illustration with distinct color blocks
+3. a dense texture study with both smooth and noisy areas
 
 ## System Pipeline
 1. **Segmentation** (`maskExtractor.ts`)
@@ -87,7 +87,7 @@ npm run validate:fps -- --video <output.mp4> --min 30
 
 ### Leakage
 ```bash
-npm run validate:leakage -- --video <output.mp4> --base ref/pics/sample_input_a.jpeg --threshold 0.03 --max-frames 240
+npm run validate:leakage -- --video <output.mp4> --base <base-image> --threshold 0.03 --max-frames 240
 ```
 
 Interpretation:

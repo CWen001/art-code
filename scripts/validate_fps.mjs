@@ -24,10 +24,10 @@ function usage() {
 }
 
 const args = parseArgs(process.argv);
-const video = args.get('video') ?? 'ref/videos/sample_motion_a.mp4';
+const video = args.get('video');
 const minFps = Number(args.get('min') ?? 30);
 
-if (!existsSync(video)) {
+if (!video || !existsSync(video)) {
   console.error(`Video not found: ${video}`);
   usage();
   process.exit(2);

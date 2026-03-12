@@ -145,13 +145,13 @@ This is the full interface. It includes:
 - snapshot export/import
 - A/B comparison and rollback
 
-The main app will first try to load prepared manifests from:
+The main app can load prepared manifests from:
 
 - `outputs/session1_integration_a/manifest.json`
 - `outputs/session1_integration_b/manifest.json`
 - `outputs/session1_integration_c/manifest.json`
 
-If those are not available, it falls back to a raw sample image in `ref/pics/`.
+If those are not available, it falls back to a built-in procedural placeholder image generated in code. No external reference art is bundled in the repository.
 
 ## Quick Start
 
@@ -198,13 +198,13 @@ The preprocessing stage lives under `preprocess/` and `scripts/`.
 ### Run Preprocessing
 
 ```bash
-npm run preprocess:run -- --input ref/pics/sample_input_a.jpeg
+npm run preprocess:run -- --input <your-image-file>
 ```
 
 Example with explicit options:
 
 ```bash
-npm run preprocess:run -- --input ref/pics/sample_input_a.jpeg --job-id demo_scene --clusters 10 --edge-threshold 0.18 --edge-dilate 2 --flow-smoothing 2 --enable-svg true --use-remote-models false
+npm run preprocess:run -- --input <your-image-file> --job-id demo_scene --clusters 10 --edge-threshold 0.18 --edge-dilate 2 --flow-smoothing 2 --enable-svg true --use-remote-models false
 ```
 
 ### Validate A Generated Package
@@ -339,6 +339,10 @@ Not included in the current scope:
 - Keep animation local, not globally smeared.
 - Use debug views as artistic instruments, not just engineering tools.
 - Prefer controllable systems over magic.
+
+## Input Policy
+
+This public repository does not ship bundled reference artworks or reference videos. Bring your own source image when running preprocessing or evaluation scripts.
 
 ## Good Inputs
 
